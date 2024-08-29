@@ -1,0 +1,30 @@
+PREFIX : <http://www.ontotext.com/connectors/elasticsearch#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX schema: <http://schema.org/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
+
+CONSTRUCT {
+  ?b skos:altLabel ?altLabelB .
+  ?b rdf:type ?type .
+  ?type rdfs:label ?label .
+  ?b rank:hasRDFRank ?rank .
+}
+WHERE {
+  SERVICE <https://query.wikidata.org/sparql> {
+    BIND(<http://www.wikidata.org/entity/Q191384> AS ?b) .
+    {
+      ?b skos:altLabel ?altLabelBLiteral .
+      FILTER (langMatches(LCASE(LANG(?altLabelBLiteral)), "en")) .
+      BIND (STR(?altLabelBLiteral) AS ?altLabelB) .
+    } UNION {
+      ?b wdt:P31 ?type .
+      ?type rdfs:label ?label .
+      FILTER (LANG(?label) = "en" ) .
+    }
+  }
+  ?b rank:hasRDFRank ?rank .
+}

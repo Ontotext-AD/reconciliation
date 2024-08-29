@@ -1,0 +1,152 @@
+###########################################
+# Ontotext Reconciliation Helm Deployment #
+###########################################
+
+nameOverride: ""
+fullnameOverride: ""
+
+extraLabels: {}
+extraAnnotations: {}
+
+##########################################
+# Ontotext Reconciliation Configurations #
+##########################################
+
+ontorecon:
+  enabled: true
+
+##########################
+# Ingress Configurations #
+##########################
+
+# Ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress: 
+  enabled: true
+  # Specifies the ingress controller implementation that will control this Ingress resource.
+  # Not defining this would result in using the default ingress controller in the cluster, if there is one.
+  className: ""
+  labels: {}
+  annotations: {}
+  hosts:
+    - host: ontorecon.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # Ref: https://kubernetes.github.io/ingress-nginx/examples/tls-termination/
+  tls:
+    # If TLS is enabled, the services should use HTTPS.
+    enabled: false
+    # If TLS is enabled, it's required to be provided, depending on the deployment.
+    # This could be an existing Secret or one that is not yet created.
+    secretName:
+  extraHosts: []
+  extraTLS: []
+
+################################
+# Reconciliator Configurations #
+################################
+
+reconciliator:
+  enabled: true
+  ingress:
+    enabled: false
+  # Refer to the https://github.com/Ontotext-AD/reconciliation/blob/main/distributions/helm/chart/README.md
+  # for the currently available configurations and their defaults.
+  configurations:
+    elastic.config.file: "opt/reconciliator/reconciliation-config.json"
+  provision:
+    # Provides the configuration file, which contains the mapping between the reconciliation endpoints and the data
+    # sources (Elastic indices).
+    elasticsearch:
+      configmap: reconciliation-config
+      filename: reconciliation-config.json
+      mountPath: /opt/reconciliator
+    # (Optional) Custom Mustache templates which can be used in the 'reconciliator-config.json'.
+    # Each template should use '.mustache' extension. Afterwards, they can be referred by name in the
+    # 'reconciliator-config.json' for 'preview.view' property
+    customPreviewTemplates:
+      enabled: true
+      mountPath: /opt/reconciliator/preview/templates
+      configmaps:
+        - name: reconciliator-default-preview-template
+          file: default.mustache
+
+################################
+# Index Manager Configurations #
+################################
+
+index_manager:
+  enabled: true
+  ingress:
+    enabled: false
+  # Refer to the https://github.com/Ontotext-AD/reconciliation/blob/main/distributions/helm/chart/README.md
+  # for the currently available configurations and their defaults.
+  configuration:
+    elasticsearch.host: "http://ontorecon-elasticsearch:9200"
+    elasticsearch.updateCronJob: "0 0 0 * * *" # Run once a day. At the moment, required for Kubernetes deployment
+    graphdb.host: "http://ontorecon-graphdb:7200"
+    graphdb.repo: "example"
+  provision:
+    index:
+      # Sets the "index.sourceDirectory" configuration and also mounts the directory
+      # The directory should contain SPARQL query for GraphDB ES Connector(s) creation
+      source:
+        # The connectors can be added to the mount directory
+        mountPath: /opt/index-manager/connectors
+        # Or passed as configmaps
+        configmaps:
+          - name: example-es-connector
+            file: example-es-connector.sparql
+      # (Optional) Sets the "index.outputDirectory" configuration and also mounts the directory
+      # This directory contains files with the status of the indexing operations and the result RDF from CONSTRUCT
+      # queries executed during the ES connector(s) creation
+      output:
+        enabled: true
+        mountPath: /opt/index-manager/index-data
+
+##########################
+# GraphDB Configurations #
+##########################
+
+# GraphDB Helm Chart - https://github.com/Ontotext-AD/graphdb-helm
+graphdb:
+  enabled: true
+  ingress:
+    enabled: false
+  # The security is set for completeness. It does nothing after the initial deployment or if it was changed afterwards.
+  security:
+    enabled: true
+  license:
+    existingSecret: graphdb-license
+  configuration:
+    properties:
+      graphdb.engine.entity.validate: false
+    javaArguments: "-Xms1g -Xmx3g"
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      memory: 4Gi
+  repositories:
+    existingConfigmap: graphdb-repositories-configmap
+  persistence:
+    volumeClaimTemplate:
+      spec:
+        resources:
+          requests:
+            storage: 10Gi
+  import:
+    volumeMount:
+      enabled: true
+
+################################
+# Elasticsearch Configurations #
+################################
+
+elasticsearch:
+  enabled: true
+  replicas: 1
+  antiAffinity: "soft"
+  extraEnvs:
+    - name: xpack.security.enabled
+      value: "false"

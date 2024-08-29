@@ -1,21 +1,5 @@
 # Ontotext Reconciliation
 
-- [Ontotext Reconciliation](#ontotext-reconciliation)
-  - [Overview](#overview)
-  - [Architecture and API](#architecture-and-api)
-    - [Base Components](#base-components)
-    - [Reconciliation](#reconciliation)
-      - [Data and Knowledge Graph](#data-and-knowledge-graph)
-      - [Reconciliation Process](#reconciliation-process)
-      - [Limitations and Known Issues](#limitations-and-known-issues)
-    - [API](#api)
-  - [Distribution](#distribution)
-  - [Public Demonstrators](#public-demonstrators)
-  - [LICENSING](#licensing)
-  - [Release Notes](#release-notes)
-  - [Contact](#contact)
-    - [Issues and Discussions](#issues-and-discussions)
-
 ## Overview
 
 In our field, the term `data reconciliation` refers to matching of specific (in most cases text) data against entities,
@@ -73,6 +57,8 @@ As shown the in the architecture diagram, the components included in Ontotext Re
   point for the clients. As data suppliers are used `Elasticsearch` indices. The service executes configurable queries
   against these indices in order to gather the candidate entities.
 
+  The service is also referred as `Reconciliator`.
+
 - `GraphDB`: the main datastore. It contains all of the information about the entities. The `Elasticsearch Connector` is
   responsible for data synchronization between `GraphDB` and `Elasticsearch` instances. When an entity is created,
   updated or deleted, the Connector updates the indices in `Elasticsearch` in the same transaction so that the data is
@@ -93,9 +79,9 @@ As shown the in the architecture diagram, the components included in Ontotext Re
 
 ### Reconciliation
 
-The reconciliation is handled by the `Reconciliation Service` as it is the service that provides the API. It is a
-[Spring Boot](https://spring.io/projects/spring-boot) application, which exposes the different reconciliation
-endpoints via REST API.
+The reconciliation is handled by the `Reconciliation Service` (Reconciliator) as it is the service that provides the
+API. It is a [Spring Boot](https://spring.io/projects/spring-boot) application, which exposes the different
+reconciliation endpoints via REST API.
 
 The application is designed to support and serve multiple reconciliation endpoints, based on the type of the entities
 that are reconciled.
@@ -328,9 +314,14 @@ For more details please refer to our blog post:
 
 TODO: a license file or at least mention how the service is licensed
 
-## Release Notes
+## Reconciliator and Index Manager Release Notes
 
-Please refer to the [RELEASE-NOTES](../releases/RELEASE-NOTES.md).
+The `Reconciliator` and `Index Manager` applications are currently internal projects with their own release cycles.
+To provide information for the application releases, not only the distributions, we have
+[application-releases](../application-releases/) directory, containing release notes for each of them.
+
+Please refer to the [RECONCILIATOR-RELEASE-NOTES](../application-releases/RECONCILIATOR-RELEASE-NOTES.md) and
+[INDEX-MANAGER-RELEASE-NOTES](../application-releases/INDEX-MANAGER-RELEASE-NOTES.md).
 
 ## Contact
 
@@ -341,3 +332,14 @@ Please contact us directly via our [Contact Form](https://www.ontotext.com/conta
 
 Alternatively, you can submit an [Issue](https://github.com/Ontotext-AD/reconciliation/issues) or open a
 [Discussion](https://github.com/Ontotext-AD/reconciliation/discussions).
+
+## Future Roadmap
+
+* Address the immediate limitations and issues with the current API.
+* Adopt `v2` of `Reconciliation Service API` Specification.
+* Migration to newer version of `Elasticsearch`.
+* Implement support for `OpenSearch` as alternative to `Elasticsearch`.
+* Merge `Index Manager` into `Reconciliator` application and make it optional. This should ease the deployment and 
+  release management. The tradeoff would be related to the application configuration management.
+* Introducing more use cases and usage examples.
+* Making the system more flexible and at the same time easier to use, which is a endless goal.

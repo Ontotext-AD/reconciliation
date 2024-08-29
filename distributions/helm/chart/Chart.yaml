@@ -1,0 +1,52 @@
+apiVersion: v2
+name: ontotext-reconciliation
+description: Ontotext's Reconciliation Service
+type: application
+version: 1.0.0-SNAPSHOT
+home: https://github.com/Ontotext-AD/reconciliation
+maintainers:
+  - name: Ontotext
+    email: reconciliation@ontotext.com
+    url: https://www.ontotext.com
+sources:
+  - https://github.com/Ontotext-AD/reconciliation
+keywords:
+  - ontotext
+  - reconciliation
+  - reconciliation service
+  - semantic
+  - rdf
+dependencies:
+  - name: ontorecon-reconciliator
+    alias: reconciliator
+    version: 1.0.0
+    repository: https://maven.ontotext.com/repository/helm-public/
+    condition: reconciliator.enabled
+    tags:
+      - ontotext-reconciliation
+      - reconciliator
+
+  - name: ontorecon-index-manager
+    alias: index_manager
+    version: 1.0.0
+    repository: https://maven.ontotext.com/repository/helm-public/
+    condition: index_manager.enabled
+    tags:
+      - ontotext-reconciliation
+      - index-manager
+
+  - name: graphdb
+    version: 11.1.3
+    repository: https://maven.ontotext.com/repository/helm-public/
+    condition: graphdb.enabled
+    tags:
+      - ontotext-reconciliation
+      - graphdb
+
+  - name: elasticsearch
+    version: 7.17.18
+    repository: https://helm.elastic.co
+    condition: elasticsearch.enabled
+    tags:
+      - ontotext-reconciliation
+      - elasticsearch
