@@ -339,6 +339,5 @@ Please contact us directly via our [Contact Form](https://www.ontotext.com/conta
 
 ### Issues and Discussions
 
-Alternatively submitting an issues or open a discussion in the current repository.
-
-TODO: add links to the GitHub pages.
+Alternatively, you can submit an [Issue](https://github.com/Ontotext-AD/reconciliation/issues) or open a
+[Discussion](https://github.com/Ontotext-AD/reconciliation/discussions).
