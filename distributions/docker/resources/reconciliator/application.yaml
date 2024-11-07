@@ -1,0 +1,32 @@
+server:
+  headers:
+    Access-Control-Allow-Origin: "*"
+    Access-Control-Allow-Headers: "*"
+
+conciliator:
+  extendData:
+    querySampleSize: 20
+    typeStrict: "must"
+  suggest:
+    propertyDefaultLimit: 10
+    entityDefaultLimit: 10
+    typeDefaultLimit: 10
+  cache:
+    enabled: true
+    ttl: 3600
+    size: 256MB # e.g. 128kB, 128MB, 128GB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  health:
+    solr:
+      enabled: false
+    elasticsearch:
+      enabled: false
+
+logging:
+  pattern:
+    level: "%5p %X{X-Request-ID}"

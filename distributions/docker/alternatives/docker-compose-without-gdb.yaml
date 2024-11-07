@@ -1,0 +1,67 @@
+# This compose requires additional/alternative provisioning for the elastic indices and data.
+# The "reconciliator" can be connected directly to the indices via "reconciliation-config.json".
+# However, using this approach would mean that there won't be RDF Rank for the entities, which
+# may worsen the results from the reconciliation process.
+#
+# This alternative approach is useful, either when you have static data or you already have an
+# Elasticsearch instance, which can be used as data provider for the reconciliator.
+
+#
+# WARN: Mind the configurations and file paths when copying the content of the current file.
+#
+
+version: '3'
+
+services:
+
+#######################
+#    Reconciliator    #
+#######################
+
+  reconciliator:
+    container_name: reconciliator
+    image: docker-registry.ontotext.com/ontotext/reconciliation/reconciliator:${RECONCILIATOR_VERSION:-1.0.0}
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      JAVA_OPTS: >-
+        -Xms${RECONCILIATOR_HEAP_SIZE:-1g} -Xmx${RECONCILIATOR_HEAP_SIZE:-1g}
+        -Delastic.config.file=/opt/reconciliation-config.json
+        -Dspring.config.location=/opt/application.yaml
+    volumes:
+      - ../resources/reconciliator/reconciliation-config.json:/opt/reconciliation-config.json
+      - ../resources/reconciliator/application.yaml:/opt/application.yaml
+      - ../resources/reconciliator/preview:/opt/resources
+    ports:
+      - 8080:8080
+
+#######################
+#    Elasticsearch    #
+#######################
+
+  elastic:
+    container_name: elastic
+    image: elasticsearch:${ELASTIC_VERSION:-7.17.18}
+    restart: unless-stopped
+    stop_grace_period: 5m
+    environment:
+      - "discovery.type=single-node"
+      - "MAX_CLAUSE_COUNT=4096"
+      - "ES_JAVA_OPTS=-Xms${ELASTIC_HEAP_SIZE:-2g} -Xmx${ELASTIC_HEAP_SIZE:-2g}"
+      - "xpack.security.enabled=false"
+      - "node.name=elastic"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+#################
+#    Volumes    #
+#################
+
+volumes:
+  elastic_data:

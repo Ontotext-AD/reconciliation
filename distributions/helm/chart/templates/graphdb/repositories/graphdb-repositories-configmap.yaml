@@ -1,0 +1,17 @@
+{{- if .Values.graphdb.enabled }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: graphdb-repositories-configmap
+  labels:
+    {{- include "ontotext-reconciliation.labels" . | nindent 4 }}
+  {{- with .Values.extraAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  example.ttl: |-
+    {{ tpl (.Files.Get "files/graphdb/repositories/example.ttl" | nindent 4) . }}
+
+{{- end }}

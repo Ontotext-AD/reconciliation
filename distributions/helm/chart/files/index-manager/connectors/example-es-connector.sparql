@@ -1,0 +1,159 @@
+PREFIX :<http://www.ontotext.com/connectors/elasticsearch#>
+PREFIX inst:<http://www.ontotext.com/connectors/elasticsearch/instance#>
+
+INSERT DATA {
+	inst:organisations_{INDEX} :createConnector '''
+    {
+      "fields": [
+        {
+            "propertyChain": ["$self"],
+            "fieldName": "id",
+            "multivalued": false,
+            "ignoreInvalidValues": true
+        },
+        {
+          "fieldName": "prefLabel",
+          "propertyChain": [
+            "http://www.w3.org/2004/02/skos/core#prefLabel"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": true,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        },
+        {
+          "fieldName": "prefLabelKeyword",
+          "propertyChain": [
+            "http://www.w3.org/2004/02/skos/core#prefLabel"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": true,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "analyzer": "keyword",
+          "objectFields": []
+        },
+        {
+          "fieldName": "altLabel",
+          "propertyChain": [
+            "http://www.w3.org/2004/02/skos/core#altLabel"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": true,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        },
+        {
+          "fieldName": "country",
+          "propertyChain": [
+            "http://www.wikidata.org/prop/direct/P17"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": false,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        },
+        {
+          "fieldName": "type",
+          "propertyChain": [
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": false,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false
+        },
+        {
+          "fieldName": "typeLabel",
+          "propertyChain": [
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            "http://www.w3.org/2000/01/rdf-schema#label"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": true,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        },
+        {
+          "fieldName": "rdfRank",
+          "propertyChain": [
+            "http://www.ontotext.com/owlim/RDFRank#hasRDFRank"
+          ],
+          "datatype": "xsd:float",
+          "indexed": true,
+          "stored": true,
+          "analyzed": true,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        },
+        {
+        "fieldName": "industry",
+              "propertyChain": [
+                "http://www.wikidata.org/prop/direct/P452"
+              ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": false,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        },
+        {
+        "fieldName": "headquarter",
+          "propertyChain": [
+            "http://www.wikidata.org/prop/direct/P131"
+          ],
+          "indexed": true,
+          "stored": true,
+          "analyzed": false,
+          "multivalued": true,
+          "ignoreInvalidValues": false,
+          "fielddata": false,
+          "array": false,
+          "objectFields": []
+        }
+      ],
+      "languages": [],
+      "types": [
+        "http://www.wikidata.org/entity/Organization"
+      ],
+      "readonly": true,
+      "detectFields": false,
+      "importGraph": false,
+      "importFile": "{DATA_TTL}",
+      "elasticsearchNode": "{{ include elasticsearch.url }}",
+      "elasticsearchClusterSniff": true,
+      "manageIndex": true,
+      "manageMapping": true,
+      "bulkUpdateBatchSize": 5000,
+      "bulkUpdateRequestSize": 5242880
+    }
+''' .
+}

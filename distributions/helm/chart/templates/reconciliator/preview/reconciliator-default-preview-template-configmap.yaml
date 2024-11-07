@@ -1,0 +1,17 @@
+{{- if .Values.reconciliator.provision.customPreviewTemplates.enabled }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reconciliator-default-preview-template
+  labels:
+    {{- include "ontotext-reconciliation.labels" . | nindent 4 }}
+  {{- with .Values.extraAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  default.mustache: |-
+    {{ .Files.Get "files/reconciliator/preview/default.mustache" | nindent 4 . }}
+
+{{- end }}

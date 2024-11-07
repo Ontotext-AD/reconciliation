@@ -1,0 +1,26 @@
+PREFIX : <http://www.ontotext.com/connectors/elasticsearch#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX schema: <http://schema.org/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
+
+CONSTRUCT {
+  ?b skos:prefLabel ?prefLabelB .
+  ?b <http://www.wikidata.org/prop/direct/P17> ?country .
+  ?b rdf:type <http://www.wikidata.org/entity/Organization> .
+}
+WHERE {
+  SERVICE <https://query.wikidata.org/sparql> {
+    BIND(<http://www.wikidata.org/entity/Q191384> AS ?b) .
+    {
+      ?b skos:prefLabel|rdfs:label ?prefLabelBLiteral .
+      FILTER (langMatches(LCASE(LANG(?prefLabelBLiteral)), "en")) .
+      BIND (STR(?prefLabelBLiteral) AS ?prefLabelB) .
+    } UNION {
+      ?b <http://www.wikidata.org/prop/direct/P17> ?country .
+    }
+  }
+}

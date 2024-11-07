@@ -1,0 +1,109 @@
+version: '3'
+
+services:
+
+#######################
+#    Reconciliator    #
+#######################
+
+  reconciliator:
+    container_name: reconciliator
+    image: docker-registry.ontotext.com/ontotext/reconciliation/reconciliator:${RECONCILIATOR_VERSION:-1.0.0}
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      JAVA_OPTS: >-
+        -Xms${RECONCILIATOR_HEAP_SIZE:-1g} -Xmx${RECONCILIATOR_HEAP_SIZE:-1g}
+        -Delastic.config.file=/opt/reconciliation-config.json
+        -Dspring.config.location=/opt/application.yaml
+    volumes:
+      - "./resources/reconciliator/reconciliation-config.json:/opt/reconciliation-config.json"
+      - "./resources/reconciliator/application.yaml:/opt/application.yaml"
+      - "./resources/reconciliator/preview:/opt/resources"
+    ports:
+      - 8080:8080
+    depends_on:
+      - elastic
+
+##########################
+#    Index Management    #
+##########################
+
+  index-manager:
+    container_name: index-manager
+    image: docker-registry.ontotext.com/ontotext/reconciliation/index-manager:${INDEX_MANAGER_VERSION:-1.0.0}
+    restart: "no"
+    stop_grace_period: 2m
+    environment:
+      JAVA_OPTS: >-
+        -Xms${INDEX_MANAGER_HEAP_SIZE:-1g} -Xmx${INDEX_MANAGER_HEAP_SIZE:-1g}
+        -Dspring.config.location=/opt/index-manager/application.yaml
+    volumes:
+      - "index_data:/opt/index-manager/"
+      - "./resources/index-manager/application.yaml:/opt/index-manager/application.yaml"
+      - "./resources/index-manager/connectors:/opt/index-manager/connectors"
+
+#################
+#    GraphDB    #
+#################
+
+  graphdb:
+    container_name: graphdb
+    image: ontotext/graphdb:${GRAPHDB_VERSION:-10.7.3}
+    restart: unless-stopped
+    stop_grace_period: 5m
+    environment:
+      GDB_JAVA_OPTS: >-
+        -Xms${GRAPHDB_HEAP_SIZE:-4g} -Xmx${GRAPHDB_HEAP_SIZE:-4g}
+        -Dgraphdb.home=/opt/graphdb/home
+        -Dgraphdb.workbench.importDirectory=/opt/graphdb/home/graphdb-import
+        -Dhealth.max.query.time.seconds=600
+        -Dgraphdb.append.request.id.headers=true
+        -Dgraphdb.workbench.cors.enable=false
+        -Dgraphdb.engine.entity.validate=false
+# To expose the instance in domain, use the exteranl url configuration as shown below
+#       -Dgraphdb.external-url=https://my.domain.com/graphdb
+# You may need to enable the below configurations as well, when the GraphDB instance is behind proxy
+#       -Dgraphdb.external-url.enforce.transactions=true
+    volumes:
+      - "graphdb_data:/opt/graphdb/home"
+      - "./resources/graphdb/graphdb.license:/opt/graphdb/home/conf/graphdb.license:ro"
+      - "./resources/graphdb/example-repo-config.ttl:/opt/graphdb/home/data/repositories/example/config.ttl"
+      - "index_data:/opt/index-manager/"
+    ports:
+      - 7200:7200
+      - 7300:7300
+
+#######################
+#    Elasticsearch    #
+#######################
+
+  elastic:
+    container_name: elastic
+    image: elasticsearch:${ELASTIC_VERSION:-7.17.18}
+    restart: unless-stopped
+    stop_grace_period: 5m
+    environment:
+      - "discovery.type=single-node"
+      - "MAX_CLAUSE_COUNT=4096"
+      - "ES_JAVA_OPTS=-Xms${ELASTIC_HEAP_SIZE:-2g} -Xmx${ELASTIC_HEAP_SIZE:-2g}"
+      - "xpack.security.enabled=false"
+      - "node.name=elastic"
+    volumes:
+      - "elastic_data:/usr/share/elasticsearch/data"
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+#################
+#    Volumes    #
+#################
+
+volumes:
+  index_data:
+    external: true
+  graphdb_data:
+  elastic_data:

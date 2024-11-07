@@ -1,0 +1,19 @@
+elasticsearch:
+  host: "http://elastic:9200"
+  updateCronJob: "0 0 2 * * *" # Every day at 02:00
+
+graphdb:
+  host: "http://graphdb:7200"
+  repo: "example"
+  # When the GraphDB security is enabled, you need to provide user credentials.
+  # This can be done here or as environment variable in the docker-compose file.
+  # username:
+  # password:
+
+index:
+  sourceDirectory: "/opt/index-manager/connectors"
+  outputDirectory: "/opt/index-manager/index-data"
+
+logging:
+  pattern:
+    level: "%5p %X{X-Request-ID}"

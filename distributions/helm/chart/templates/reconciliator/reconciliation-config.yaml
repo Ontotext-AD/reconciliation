@@ -1,0 +1,17 @@
+{{- if .Values.reconciliator.enabled }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reconciliation-config
+  labels:
+    {{- include "ontotext-reconciliation.labels" . | nindent 4 }}
+  {{- with .Values.extraAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  reconciliation-config.json: |-
+    {{ tpl (.Files.Get "files/reconciliator/reconciliation-config.json" | nindent 4) . }}
+
+{{- end }}
