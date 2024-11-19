@@ -1,4 +1,6 @@
-{{- if .Values.reconciliator.enabled }}
+{{- if and .Values.reconciliator.enabled (eq .Values.reconciliator.provision.reconciliation.configmap "reconciliation-config")}}
+
+{{- $sourcefile := (required "Either provide 'reconciliator.provision.reconciliation.sourcefile' or override the 'reconciliator.provision.reconciliation.configmap'!" .Values.reconciliator.provision.reconciliation.sourcefile) -}}
 
 apiVersion: v1
 kind: ConfigMap
@@ -12,6 +14,6 @@ metadata:
   {{- end }}
 data:
   reconciliation-config.json: |-
-    {{ tpl (.Files.Get "files/reconciliator/reconciliation-config.json" | nindent 4) . }}
+    {{ tpl (.Files.Get $sourcefile | nindent 4) . }}
 
 {{- end }}

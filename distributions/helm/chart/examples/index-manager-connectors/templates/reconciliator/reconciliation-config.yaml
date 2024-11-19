@@ -1,9 +1,7 @@
-{{- if .Values.index_manager.enabled }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: example-es-connector
+  name: reconciliation-config
   labels:
     {{- include "ontotext-reconciliation.labels" . | nindent 4 }}
   {{- with .Values.extraAnnotations }}
@@ -12,6 +10,4 @@ metadata:
   {{- end }}
 data:
   reconciliation-config.json: |-
-    {{ tpl (.Files.Get "files/index-manager/connectors/example-es-connector.sparql" | nindent 4) . }}
-
-{{- end }}
+    {{ tpl (.Files.Get .Values.reconciliator.provision.reconciliation.sourcefile | nindent 4) . }}

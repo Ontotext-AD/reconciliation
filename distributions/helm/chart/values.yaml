@@ -39,8 +39,8 @@ ingress:
     # If TLS is enabled, it's required to be provided, depending on the deployment.
     # This could be an existing Secret or one that is not yet created.
     secretName:
+    hosts: []
   extraHosts: []
-  extraTLS: []
 
 ################################
 # Reconciliator Configurations #
@@ -57,7 +57,8 @@ reconciliator:
   provision:
     # Provides the configuration file, which contains the mapping between the reconciliation endpoints and the data
     # sources (Elastic indices).
-    elasticsearch:
+    reconciliation:
+      sourcefile:
       configmap: reconciliation-config
       filename: reconciliation-config.json
       mountPath: /opt/reconciliator
@@ -68,14 +69,14 @@ reconciliator:
       enabled: true
       mountPath: /opt/reconciliator/preview/templates
       configmaps:
-        - name: reconciliator-default-preview-template
+        - name: reconciliator-default-preview
           file: default.mustache
 
 ################################
 # Index Manager Configurations #
 ################################
 
-index_manager:
+indexer:
   enabled: true
   ingress:
     enabled: false
@@ -91,12 +92,14 @@ index_manager:
       # Sets the "index.sourceDirectory" configuration and also mounts the directory
       # The directory should contain SPARQL query for GraphDB ES Connector(s) creation
       source:
-        # The connectors can be added to the mount directory
+        # The connectors can be added to the mount directory when the service starts
         mountPath: /opt/index-manager/connectors
         # Or passed as configmaps
-        configmaps:
-          - name: example-es-connector
-            file: example-es-connector.sparql
+        # configmaps:
+        #   - name: es-connector-1
+        #     file: es-connector-1.sparql
+        #   - name: es-connector-2
+        #     file: es-connector-2.sparql
       # (Optional) Sets the "index.outputDirectory" configuration and also mounts the directory
       # This directory contains files with the status of the indexing operations and the result RDF from CONSTRUCT
       # queries executed during the ES connector(s) creation
@@ -145,6 +148,7 @@ graphdb:
 
 elasticsearch:
   enabled: true
+  imageTag: "7.17.18"
   replicas: 1
   antiAffinity: "soft"
   extraEnvs:
