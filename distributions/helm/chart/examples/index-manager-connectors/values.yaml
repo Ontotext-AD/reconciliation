@@ -1,0 +1,28 @@
+##########################################
+# Reconciliator Configurations Overrides #
+##########################################
+
+reconciliator:
+  configurations:
+    elastic.config.file: "opt/reconciliator/reconciliation-config.json"
+  provision:
+    reconciliation:
+      sourcefile: files/reconciliator/reconciliation-config.json
+      configmap: reconciliation-config
+      filename: reconciliation-config.json
+      mountPath: /opt/reconciliator
+
+##########################################
+# Index Manager Configurations Overrides #
+##########################################
+
+index_manager:
+  provision:
+    index:
+      source:
+        mountPath: /opt/index-manager/connectors
+        configmaps:
+          - name: es-connector-1
+            file: es-connector-1.sparql
+          - name: es-connector-2
+            file: es-connector-2.sparql

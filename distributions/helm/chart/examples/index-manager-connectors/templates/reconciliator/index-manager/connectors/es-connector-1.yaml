@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: es-connector-1
+  labels:
+    {{- include "ontotext-reconciliation.labels" . | nindent 4 }}
+  {{- with .Values.extraAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  es-connector-1.sparql: |-
+    {{ tpl (.Files.Get "files/index-manager/connectors/es-connector-1.sparql" | nindent 4) . }}

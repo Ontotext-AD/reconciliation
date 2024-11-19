@@ -1,0 +1,25 @@
+{
+  "organizations": {
+    "indexName": "organizations",
+    "elasticUrl": {{ include "elasticsearch.url" | quote }},
+    "queryField": ["prefLabel", "altLabel"],
+    "nameField": "prefLabel",
+    "typeField": "type",
+    "searchFieldPhraseBoost": 1,
+    "searchFieldPhraseSlop": 2,
+    "searchFieldBoost": 1.2,
+    "typeFieldBoost": 2,
+    "types": [
+      "http://www.wikidata.org/entity/Organization"
+    ],
+    "defaultType": "http://www.wikidata.org/entity/Organization",
+    "propertiesBoost": {
+      "country": 0.5
+    },
+    "preview": {
+      "mode": "EXTERNAL",
+      "urlTemplate": "{{ printf "https://wikidata.reconci.link/en/preview?id={{id}}" }}",
+      "idRegex": ".*/([^/]*)$"
+    }
+  }
+}

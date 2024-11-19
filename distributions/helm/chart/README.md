@@ -1,6 +1,6 @@
 # Ontotext Reconciliation Helm Charts
 
-![Version: 1.0.0-SNAPSHOT](https://img.shields.io/badge/Version-1.0.0--SNAPSHOT-informational?style=flat-square)
+![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square)
 
 ## Overview
 
@@ -22,6 +22,11 @@ helm install ontotext-reconciliation ontotext/ontotext-reconciliation
 ```
 
 The chart is released and published in our own Public Helm Repository.
+
+> **NOTE**: You need to provide the required configuration files, before installing the chart. Refer to
+  [example-reconciliation-config.json](./files/reconciliator/example-reconciliation-config.json) and
+  [example-es-connector.sparql](./files/index-manager/connectors/example-es-connector.sparql) or the
+  [Configurations](#configurations) section below for more details on their content.
 
 ## Prerequisites
 
@@ -428,7 +433,7 @@ are currently set for the sub-chart.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| configuration."service.port" | string | `"8080"` |  |
+| configuration."server.port" | string | `"8080"` |  |
 | extraAnnotations | object | `{}` |  |
 | extraConfig | object | `{}` |  |
 | extraContainers | list | `[]` |  |
@@ -477,10 +482,10 @@ are currently set for the sub-chart.
 | provision.customPreviewTemplates.configmaps[0].name | string | `"reconciliator-default-preview-template"` |  |
 | provision.customPreviewTemplates.enabled | bool | `false` |  |
 | provision.customPreviewTemplates.mountPath | string | `"/opt/reconciliator/preview/templates"` |  |
-| provision.elasticsearch.configmap | string | `"reconciliator-elastic-config"` |  |
-| provision.elasticsearch.filename | string | `"elastic-config.json"` |  |
-| provision.elasticsearch.mountPath | string | `"/opt/reconciliator"` |  |
-| readinessProbe.httpGet.path | string | `"/protocol"` |  |
+| provision.reconciliation.configmap | string | `nil` |  |
+| provision.reconciliation.filename | string | `"elastic-config.json"` |  |
+| provision.reconciliation.mountPath | string | `"/opt/reconciliator"` |  |
+| readinessProbe.httpGet.path | string | `"/__about"` |  |
 | readinessProbe.httpGet.port | string | `"http"` |  |
 | resources | object | `{}` |  |
 | secretConfiguration | object | `{}` |  |
@@ -500,7 +505,7 @@ are currently set for the sub-chart.
 | serviceAccount.create | bool | `true` |  |
 | serviceAccount.name | string | `""` |  |
 | startupProbe.failureThreshold | int | `10` |  |
-| startupProbe.httpGet.path | string | `"/protocol"` |  |
+| startupProbe.httpGet.path | string | `"/__about"` |  |
 | startupProbe.httpGet.port | string | `"http"` |  |
 | startupProbe.initialDelaySeconds | int | `5` |  |
 | startupProbe.periodSeconds | int | `3` |  |
@@ -514,7 +519,7 @@ are currently set for the sub-chart.
 
 Below you can find the list of the application configurations, which are currently supported by the `Index Manager`.
 Each value can be overridden by setting a pair of key and value into the `values.yaml` (or the `.yaml` that overrides
-it) for the `index_manager.configurations` section.
+it) for the `indexer.configurations` section.
 
 | Key                         | Default Value          | Description                                                                                                          |
 |-----------------------------|------------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -665,7 +670,7 @@ are currently set for the sub-chart.
 | configuration."elasticsearch.host" | string | `"http://elastic:9200"` |  |
 | configuration."elasticsearch.updateCronJob" | string | `"0 0 0 * * *"` |  |
 | configuration."graphdb.host" | string | `"http://graphdb:7200"` |  |
-| configuration."graphdb.repo" | string | `"wdtruthy"` |  |
+| configuration."graphdb.repo" | string | `""` |  |
 | extraAnnotations | object | `{}` |  |
 | extraConfig | object | `{}` |  |
 | extraContainers | list | `[]` |  |
@@ -712,9 +717,13 @@ are currently set for the sub-chart.
 | podSecurityContext | object | `{}` |  |
 | provision.index.output.enabled | bool | `false` |  |
 | provision.index.output.mountPath | string | `"/opt/index_data"` |  |
-| provision.index.source.configmaps | list | `[]` |  |
+| provision.index.output.volumeClaimTemplateSpec.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| provision.index.output.volumeClaimTemplateSpec.resources.requests.storage | string | `"256Mi"` |  |
+| provision.index.source.configmaps | object | `{}` |  |
 | provision.index.source.mountPath | string | `"/opt/create_indices"` |  |
-| readinessProbe.httpGet.path | string | `"/protocol"` |  |
+| provision.index.source.volumeClaimTemplateSpec.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| provision.index.source.volumeClaimTemplateSpec.resources.requests.storage | string | `"256Mi"` |  |
+| readinessProbe.httpGet.path | string | `"/__about"` |  |
 | readinessProbe.httpGet.port | string | `"http"` |  |
 | resources | object | `{}` |  |
 | secretConfiguration | object | `{}` |  |
@@ -734,7 +743,7 @@ are currently set for the sub-chart.
 | serviceAccount.create | bool | `true` |  |
 | serviceAccount.name | string | `""` |  |
 | startupProbe.failureThreshold | int | `10` |  |
-| startupProbe.httpGet.path | string | `"/protocol"` |  |
+| startupProbe.httpGet.path | string | `"/__about"` |  |
 | startupProbe.httpGet.port | string | `"http"` |  |
 | startupProbe.initialDelaySeconds | int | `5` |  |
 | startupProbe.periodSeconds | int | `3` |  |

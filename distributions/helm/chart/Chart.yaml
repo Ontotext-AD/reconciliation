@@ -2,7 +2,7 @@ apiVersion: v2
 name: ontotext-reconciliation
 description: Ontotext's Reconciliation Service
 type: application
-version: 1.0.0-SNAPSHOT
+version: 1.0.0
 home: https://github.com/Ontotext-AD/reconciliation
 maintainers:
   - name: Ontotext
@@ -27,10 +27,10 @@ dependencies:
       - reconciliator
 
   - name: ontorecon-index-manager
-    alias: index_manager
+    alias: indexer
     version: 1.0.0
     repository: https://maven.ontotext.com/repository/helm-public/
-    condition: index_manager.enabled
+    condition: indexer.enabled
     tags:
       - ontotext-reconciliation
       - index-manager
@@ -44,7 +44,7 @@ dependencies:
       - graphdb
 
   - name: elasticsearch
-    version: 7.17.18
+    version: 7.17.3
     repository: https://helm.elastic.co
     condition: elasticsearch.enabled
     tags:

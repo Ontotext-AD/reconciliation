@@ -2,14 +2,14 @@ PREFIX :<http://www.ontotext.com/connectors/elasticsearch#>
 PREFIX inst:<http://www.ontotext.com/connectors/elasticsearch/instance#>
 
 INSERT DATA {
-	inst:organisations_{INDEX} :createConnector '''
+	inst:organisations-1_{INDEX} :createConnector '''
     {
       "fields": [
         {
-            "propertyChain": ["$self"],
-            "fieldName": "id",
-            "multivalued": false,
-            "ignoreInvalidValues": true
+          "propertyChain": ["$self"],
+          "fieldName": "id",
+          "multivalued": false,
+          "ignoreInvalidValues": true
         },
         {
           "fieldName": "prefLabel",
@@ -24,22 +24,7 @@ INSERT DATA {
           "fielddata": false,
           "array": false,
           "objectFields": []
-        },
-        {
-          "fieldName": "prefLabelKeyword",
-          "propertyChain": [
-            "http://www.w3.org/2004/02/skos/core#prefLabel"
-          ],
-          "indexed": true,
-          "stored": true,
-          "analyzed": true,
-          "multivalued": true,
-          "ignoreInvalidValues": false,
-          "fielddata": false,
-          "array": false,
-          "analyzer": "keyword",
-          "objectFields": []
-        },
+        }
         {
           "fieldName": "altLabel",
           "propertyChain": [
@@ -48,20 +33,6 @@ INSERT DATA {
           "indexed": true,
           "stored": true,
           "analyzed": true,
-          "multivalued": true,
-          "ignoreInvalidValues": false,
-          "fielddata": false,
-          "array": false,
-          "objectFields": []
-        },
-        {
-          "fieldName": "country",
-          "propertyChain": [
-            "http://www.wikidata.org/prop/direct/P17"
-          ],
-          "indexed": true,
-          "stored": true,
-          "analyzed": false,
           "multivalued": true,
           "ignoreInvalidValues": false,
           "fielddata": false,
@@ -105,34 +76,6 @@ INSERT DATA {
           "indexed": true,
           "stored": true,
           "analyzed": true,
-          "multivalued": true,
-          "ignoreInvalidValues": false,
-          "fielddata": false,
-          "array": false,
-          "objectFields": []
-        },
-        {
-        "fieldName": "industry",
-              "propertyChain": [
-                "http://www.wikidata.org/prop/direct/P452"
-              ],
-          "indexed": true,
-          "stored": true,
-          "analyzed": false,
-          "multivalued": true,
-          "ignoreInvalidValues": false,
-          "fielddata": false,
-          "array": false,
-          "objectFields": []
-        },
-        {
-        "fieldName": "headquarter",
-          "propertyChain": [
-            "http://www.wikidata.org/prop/direct/P131"
-          ],
-          "indexed": true,
-          "stored": true,
-          "analyzed": false,
           "multivalued": true,
           "ignoreInvalidValues": false,
           "fielddata": false,

@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: reconciliator-default-preview-template
+  name: reconciliator-default-preview
   labels:
     {{- include "ontotext-reconciliation.labels" . | nindent 4 }}
   {{- with .Values.extraAnnotations }}
@@ -12,6 +12,6 @@ metadata:
   {{- end }}
 data:
   default.mustache: |-
-    {{ .Files.Get "files/reconciliator/preview/default.mustache" | nindent 4 . }}
+    {{ .Files.Get "files/reconciliator/preview/default.mustache" | nindent 4 }}
 
 {{- end }}

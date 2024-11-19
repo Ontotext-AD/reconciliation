@@ -25,5 +25,14 @@
 *.tmproj
 .vscode/
 
-# Examples Dir
+# Helm Build
+.helmignore
+Chart.lock
+
+# Examples Directories and files
 examples/
+example-es-connector.sparql
+example-reconciliation-config.json
+
+# README template use by helm-docs
+./README.md.gotmpl
