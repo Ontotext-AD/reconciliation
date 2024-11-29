@@ -311,9 +311,9 @@ These templates are configured via specific field: `preview` and currently there
   * `urlTemplate`: template for the external URL. Should contain `{{id}}`, which is to be replaced with the ID of the
     object to be previewed.
   * `idPrefix`: prefix which is to be removed from the `id` before being sent to the external service.
-  * `idRegex` - if set the regex will be applied against the `id` and only the 1st group will be selected as `id` to be
+  * `idRegex`: if set the regex will be applied against the `id` and only the 1st group will be selected as `id` to be
     sent to the external service.
-  * `cssTemplate`: could be used to return only a part of the HTML returned from the external  service. Internally
+  * `cssQuery`: could be used to return only a part of the HTML returned from the external service. Internally
     [jsoup](https://jsoup.org/cookbook/extracting-data/selector-syntax) is used to parse and select from the HTML.
   * `baseUrl`: if set the collected page will get its base changed. This is used when the page contains relative URLs
     which would otherwise not work.
